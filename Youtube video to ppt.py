@@ -5,6 +5,7 @@ from skimage.metrics import structural_similarity as ssim
 from pptx import Presentation
 from pptx.util import Inches
 import re
+from natsort import natsorted  # Import natural sorting
 
 def download_video(url, output_path="video.mp4"):
     ydl_opts = {
@@ -76,18 +77,12 @@ for slide in slides:
 print(f"Slides saved in '{slide_folder}' folder.")
 
 
-def numerical_sort(value):
-    """Extract numbers from filename to ensure proper sorting."""
-    numbers = re.findall(r'\d+', value)
-    return int(numbers[0]) if numbers else 0
-
 def create_ppt_from_folder(folder_path, output_ppt="slides.pptx"):
     prs = Presentation()
 
-    # Get all image files from the folder and sort them numerically
-    slides = sorted(
-        [os.path.join(folder_path, f) for f in os.listdir(folder_path) if f.endswith(('.png', '.jpg', '.jpeg'))],
-        key=numerical_sort
+    # Get all image files from the folder and sort them using natural sorting
+    slides = natsorted(
+        [os.path.join(folder_path, f) for f in os.listdir(folder_path) if f.endswith(('.png', '.jpg', '.jpeg'))]
     )
 
     if not slides:
@@ -103,9 +98,10 @@ def create_ppt_from_folder(folder_path, output_ppt="slides.pptx"):
     print(f"PPT created: {output_ppt}")
 
 # Set the folder containing images
-slides_folder = "slides_new"
-output_ppt = "extracted_slides_1.pptx"
+slides_folder = "slides_new3"
+output_ppt = "extracted_slides_4.pptx"
 create_ppt_from_folder(slides_folder, output_ppt)
+
 
 
 
