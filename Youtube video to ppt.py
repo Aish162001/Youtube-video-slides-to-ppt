@@ -1,10 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
-
-
 import yt_dlp
+import cv2
+import os
+from skimage.metrics import structural_similarity as ssim
+from pptx import Presentation
+from pptx.util import Inches
+import re
 
 def download_video(url, output_path="video.mp4"):
     ydl_opts = {
@@ -15,16 +15,10 @@ def download_video(url, output_path="video.mp4"):
         ydl.download([url])
     return output_path
 
-video_url = "https://www.youtube.com/watch?v=ayfr6KN4Jd0"
+video_url = "VIDEO_URL"
 video_path = download_video(video_url)
 print(f"Video downloaded to: {video_path}")
 
-
-# In[3]:
-
-
-import cv2
-import os
 
 def extract_frames(video_path, output_folder="frames", interval=1):
     os.makedirs(output_folder, exist_ok=True)
@@ -50,11 +44,6 @@ frames = extract_frames(video_path)
 print(f"Extracted {len(frames)} frames.")
 
 
-# In[4]:
-
-
-from skimage.metrics import structural_similarity as ssim
-
 def detect_slide_changes_ssim(frames, threshold=0.98):
     slides = [frames[0]]  # First frame is always a slide
     prev_img = cv2.imread(frames[0], cv2.IMREAD_GRAYSCALE)
@@ -62,7 +51,6 @@ def detect_slide_changes_ssim(frames, threshold=0.98):
     for i in range(1, len(frames)):
         curr_img = cv2.imread(frames[i], cv2.IMREAD_GRAYSCALE)
         
-        # Resize images to the same dimensions if needed
         if prev_img.shape != curr_img.shape:
             curr_img = cv2.resize(curr_img, (prev_img.shape[1], prev_img.shape[0]))
 
@@ -78,9 +66,6 @@ slides = detect_slide_changes_ssim(frames, threshold=0.98)
 print(f"Detected {len(slides)} slides with SSIM method.")
 
 
-# In[5]:
-
-
 slide_folder = "slides_new"
 os.makedirs(slide_folder, exist_ok=True)
 
@@ -90,14 +75,6 @@ for slide in slides:
 
 print(f"Slides saved in '{slide_folder}' folder.")
 
-
-# In[9]:
-
-
-from pptx import Presentation
-from pptx.util import Inches
-import os
-import re
 
 def numerical_sort(value):
     """Extract numbers from filename to ensure proper sorting."""
@@ -130,8 +107,6 @@ slides_folder = "slides_new"
 output_ppt = "extracted_slides_1.pptx"
 create_ppt_from_folder(slides_folder, output_ppt)
 
-
-# In[ ]:
 
 
 
